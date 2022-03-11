@@ -1,8 +1,6 @@
 use dioxus::prelude::*;
 
-use crate::props::HomePageProps;
-
-pub fn Homepage(cx: Scope<HomePageProps>) -> Element {
+pub fn Homepage(cx: Scope) -> Element {
     cx.render(rsx! {
         div {
 

@@ -1,11 +1,9 @@
 #![allow(non_snake_case)]
 
 mod config;
-mod props;
 mod router;
 mod themes;
-
-use std::{fs::File, io::Read};
+mod component;
 
 use dioxus::prelude::*;
 
@@ -23,7 +21,7 @@ static ROUTER: Atom<String> = |_| {
 };
 
 fn app(cx: Scope) -> Element {
-    let window = web_sys::window().unwrap();
+    // let window = web_sys::window().unwrap();
     // let web_document = window.document().unwrap();
 
     // 全局 Router 数据，使用 Fermi 状态管理工具
@@ -57,6 +55,8 @@ fn app(cx: Scope) -> Element {
 
         TopBar {}
 
+        // 自制路由系统，因为 Dioxus 原生的路由无法满足我的需求
+        // 我需要的路径控制主要在 /#/ 之后
         match router.as_str() {
             "/" => {
                 rsx! {
