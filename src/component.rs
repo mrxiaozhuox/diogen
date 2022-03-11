@@ -3,8 +3,7 @@ use dioxus::prelude::*;
 use crate::config::DiogenConfig;
 
 #[derive(Props)]
-pub struct LinkProps<'a>{
-    
+pub struct LinkProps<'a> {
     #[props(default = "#")]
     pub to: &'a str,
 
@@ -18,24 +17,38 @@ pub struct LinkProps<'a>{
 }
 
 pub fn Link<'a>(cx: Scope<'a, LinkProps<'a>>) -> Element {
-    
     let config = use_context::<DiogenConfig>(&cx).unwrap();
     let config = config.read();
 
-    let mut to = cx.props.to.to_string();
-    if &config.root != "/" && !config.root.is_empty() {
-        to = if config.root.ends_with('/') {
-            format!("{}{}", config.root, to)
-        } else {
-            format!("{}/{}", config.root, to)
+    let to = cx.props.to.to_string();
+
+    let mut link = (String::new(), to.clone());
+    if link.1.starts_with('/') {
+        let route_link = link.1;
+        link = (format!("/#{route_link}"), to);
+
+        if &config.root != "/" && !config.root.is_empty() {
+            if link.0.starts_with('/') {
+                link.0 = link.0[1..].to_string();
+            }
+            link.0 = if config.root.ends_with('/') {
+                format!("{}{}", config.root, link.0)
+            } else {
+                format!("{}/{}", config.root, link.0)
+            }
         }
+    } else {
+        link = (to, String::from("/@skip"));
     }
 
     cx.render(rsx! {
         a {
             class: "{cx.props.class}",
-            href: "{to}",
+            href: "{link.0}",
             target: "{cx.props.target}",
+            onclick: move |evt| {
+                use_set(&cx, super::ROUTER)(link.1.clone());
+            },
             &cx.props.children
         }
     })

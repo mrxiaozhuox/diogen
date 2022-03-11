@@ -3,6 +3,8 @@ window.diogen = {
   title: "Diogen Blog",
   theme: "blog",
 
+  root: "/diogen/",
+
   nav: [
     {
       text: "Home",
