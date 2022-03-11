@@ -7,7 +7,6 @@ pub mod docs;
 
 #[inline_props]
 pub fn TopBar(cx: Scope) -> Element {
-
     let config = use_context::<DiogenConfig>(&cx).unwrap();
     let config = config.read();
 
@@ -15,11 +14,23 @@ pub fn TopBar(cx: Scope) -> Element {
 
     let nav_list = config.nav.clone();
     let nav_list = nav_list.iter().map(|v| {
+        let mut link = (String::new(), v.link.clone());
+        if &link.1 == "/" {
+            link = (String::from("/#/"), "/".into());
+        } else if link.1.starts_with('/') {
+            let route_link = link.1;
+            link = (format!("/#{route_link}"), v.link.clone());
+        } else {
+            link = (v.link.clone(), String::from("/@skip"));
+        }
+
         rsx! {
             a {
                 class: "navbar-item",
-                href: "/#{v.link}",
-                onclick: |_| { js_sys::eval("location.reload()").unwrap(); },
+                href: "{link.0}",
+                onclick: move |_| {
+                    use_set(&cx, super::ROUTER)(link.1.clone());
+                },
                 "{v.text}"
             }
         }
@@ -50,7 +61,7 @@ pub fn TopBar(cx: Scope) -> Element {
                         span {}
                     }
                 }
-    
+
                 div {
                     class: "navbar-menu",
                     id: "navbarMenus",

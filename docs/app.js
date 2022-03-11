@@ -11,6 +11,10 @@ window.diogen = {
     {
       text: "About",
       link: "/about"
+    },
+    {
+      text: "DioxusLabs",
+      link: "https://dioxuslabs.com/"
     }
   ]
 

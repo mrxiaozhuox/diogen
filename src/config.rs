@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -8,6 +6,9 @@ pub struct DiogenConfig {
 
     #[serde(default = "default_theme")]
     pub theme: String,
+
+    #[serde(default = "default_root")]
+    pub root: String,
 
     #[serde(default)]
     pub nav: Vec<NavInfo>,
@@ -24,6 +25,10 @@ pub struct NavInfo {
 
 fn default_theme() -> String {
     String::from("blog")
+}
+
+fn default_root() -> String {
+    String::from("/")
 }
 
 fn nav_default_target() -> String {

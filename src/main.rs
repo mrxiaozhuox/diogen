@@ -5,6 +5,8 @@ mod props;
 mod router;
 mod themes;
 
+use std::{fs::File, io::Read};
+
 use dioxus::prelude::*;
 
 use crate::{config::DiogenConfig, themes::TopBar};
@@ -14,9 +16,18 @@ fn main() {
     dioxus::web::launch(app);
 }
 
-fn app(cx: Scope) -> Element {
+static ROUTER: Atom<String> = |_| {
     let window = web_sys::window().unwrap();
     let web_document = window.document().unwrap();
+    router::url_to_route(&web_document.url().unwrap())
+};
+
+fn app(cx: Scope) -> Element {
+    let window = web_sys::window().unwrap();
+    // let web_document = window.document().unwrap();
+
+    // 全局 Router 数据，使用 Fermi 状态管理工具
+    let router = use_read(&cx, ROUTER);
 
     // 当 APP 组件你第一次被运行时，会加载配置文件并更新信息
     let config = use_state(&cx, || {
@@ -35,8 +46,6 @@ fn app(cx: Scope) -> Element {
     // 这种方案要比 props 传递更加方便
     use_context_provider(&cx, || config.clone());
 
-    let router_target = router::url_to_route(&web_document.url().unwrap());
-
     let Homepage = if &config.theme == "blog" {
         themes::blog::Homepage
     } else {
@@ -48,11 +57,15 @@ fn app(cx: Scope) -> Element {
 
         TopBar {}
 
-        match router_target.as_str() {
+        match router.as_str() {
             "/" => {
                 rsx! {
-                    Homepage {
-                    }
+                    Homepage {}
+                }
+            }
+            "/@skip" => {
+                rsx! {
+                    div { "S" }
                 }
             }
             _v => {
