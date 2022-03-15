@@ -45,3 +45,6 @@ script = [
 # Javascript code file
 # serve: [dev-server] only
 script = []
+
+[application.tools]
+binaryen = { wasm_opt = true }

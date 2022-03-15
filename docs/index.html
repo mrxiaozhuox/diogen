@@ -18,7 +18,10 @@
 
   </body>
 </html>
-<script>(function () {
+<script>// Dioxus-CLI
+// https://github.com/DioxusLabs/cli
+
+(function () {
   var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   var url = protocol + '//' + window.location.host + '/_dioxus/ws';
   var poll_interval = 8080;
@@ -35,7 +38,6 @@
   var ws = new WebSocket(url);
   ws.onmessage = (ev) => {
       if (ev.data == "reload") {
-        //   alert("reload!!!");
           window.location.reload();
       }
   };

@@ -10,7 +10,7 @@ pub struct LinkProps<'a> {
     #[props(default)]
     pub class: &'a str,
 
-    #[props(default = "_blank")]
+    #[props(default = "_self")]
     pub target: &'a str,
 
     pub children: Element<'a>,

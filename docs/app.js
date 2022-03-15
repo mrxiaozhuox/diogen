@@ -3,16 +3,18 @@ window.diogen = {
   title: "Diogen Blog",
   theme: "blog",
 
-  root: "/diogen/",
+  root: "/",
 
   nav: [
     {
       text: "Home",
-      link: "/"
+      link: "/",
+      icon: "home"
     },
     {
       text: "About",
-      link: "/about"
+      link: "/about",
+      icon: "briefcase"
     },
     {
       text: "DioxusLabs",

@@ -19,6 +19,9 @@ pub struct NavInfo {
     pub text: String,
     pub link: String,
 
+    #[serde(default)]
+    pub icon: String,
+
     #[serde(default = "nav_default_target")]
     pub target: String,
 }

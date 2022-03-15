@@ -1,9 +1,11 @@
 use dioxus::prelude::*;
+use dioxus_heroicons::Icon;
 
-use crate::{config::DiogenConfig, component::Link};
+use crate::{component::Link, config::DiogenConfig};
 
 pub mod blog;
 pub mod docs;
+pub mod icons;
 
 #[inline_props]
 pub fn TopBar(cx: Scope) -> Element {
@@ -12,13 +14,37 @@ pub fn TopBar(cx: Scope) -> Element {
 
     // log::info!("{config:?}");
 
+    let curr_route = use_read(&cx, super::ROUTER);
+
     let nav_list = config.nav.clone();
     let nav_list = nav_list.iter().map(|v| {
-        rsx! {
-            Link {
-                class: "navbar-item",
-                to: "{v.link}",
-                "{v.text}"
+        let class = if curr_route == &v.link {
+            "navbar-item is-active"
+        } else {
+            "navbar-item"
+        };
+
+        
+        let shape = icons::get_outline_icon(&v.icon);
+        if shape.is_none() {
+            rsx! {
+                Link {
+                    class: "{class}",
+                    to: "{v.link}",
+                    "{v.text}"
+                }
+            }
+        } else {
+            rsx! {
+                Link {
+                    class: "{class}",
+                    to: "{v.link}",
+                    Icon {
+                        icon: shape.unwrap(),
+                        size: 16,
+                    }
+                    "{v.text}"
+                }
             }
         }
     });
