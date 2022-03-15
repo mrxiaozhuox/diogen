@@ -25,7 +25,7 @@ pub fn TopBar(cx: Scope) -> Element {
         };
 
         
-        let shape = icons::get_outline_icon(&v.icon);
+        let shape = icons::get_solid_icon(&v.icon);
         if shape.is_none() {
             rsx! {
                 Link {
@@ -62,7 +62,7 @@ pub fn TopBar(cx: Scope) -> Element {
                     a {
                         class: "navbar-item",
                         style: "font-size: 21px;",
-                        href: "#",
+                        href: "javascript:;",
                         strong { "{config.title}" }
                     }
                     a {
@@ -89,6 +89,7 @@ pub fn TopBar(cx: Scope) -> Element {
             }
 
         }
+        br {}
         br {}
         br {}
     ))

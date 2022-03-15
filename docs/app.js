@@ -14,7 +14,7 @@ window.diogen = {
     {
       text: "About",
       link: "/about",
-      icon: "briefcase"
+      icon: "academic-cap"
     },
     {
       text: "DioxusLabs",
