@@ -1,2 +1,2 @@
 # diogen
-A static site generator powered by Dioxus
+A static blog generator powered by Dioxus

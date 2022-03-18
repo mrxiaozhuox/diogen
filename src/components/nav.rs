@@ -1,11 +1,9 @@
 use dioxus::prelude::*;
 use dioxus_heroicons::Icon;
+use crate::components::link::Link;
+use crate::config::DiogenConfig;
 
-use crate::{component::Link, config::DiogenConfig};
-
-pub mod blog;
-pub mod docs;
-pub mod icons;
+use super::icons;
 
 #[inline_props]
 pub fn TopBar(cx: Scope) -> Element {
@@ -14,7 +12,7 @@ pub fn TopBar(cx: Scope) -> Element {
 
     // log::info!("{config:?}");
 
-    let curr_route = use_read(&cx, super::ROUTER);
+    let curr_route = use_read(&cx, crate::ROUTER);
 
     let nav_list = config.nav.clone();
     let nav_list = nav_list.iter().map(|v| {

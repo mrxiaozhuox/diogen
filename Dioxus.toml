@@ -36,9 +36,7 @@ style = [
 ]
 
 # Javascript code file
-script = [
-    "./app.js"
-]
+script = []
 
 [web.resource.dev]
 

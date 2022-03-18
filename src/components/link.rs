@@ -46,8 +46,8 @@ pub fn Link<'a>(cx: Scope<'a, LinkProps<'a>>) -> Element {
             class: "{cx.props.class}",
             href: "{link.0}",
             target: "{cx.props.target}",
-            onclick: move |evt| {
-                use_set(&cx, super::ROUTER)(link.1.clone());
+            onclick: move |_| {
+                use_set(&cx, crate::ROUTER)(link.1.clone());
             },
             &cx.props.children
         }

@@ -1,13 +1,14 @@
 #![allow(non_snake_case)]
 
-mod component;
+mod components;
 mod config;
 mod router;
-mod themes;
 
+use crate::components::{nav::TopBar, pages};
 use dioxus::prelude::*;
+use reqwasm::http::Request;
 
-use crate::{config::DiogenConfig, themes::TopBar};
+use crate::config::DiogenConfig;
 
 fn main() {
     wasm_logger::init(wasm_logger::Config::default());
@@ -25,27 +26,33 @@ fn app(cx: Scope) -> Element {
     let router = use_read(&cx, ROUTER);
 
     // 当 APP 组件第一次被运行时，会加载配置文件并更新信息
-    let config = use_state(&cx, || {
-        js_sys::eval("window.diogen")
-            .unwrap()
-            .into_serde::<DiogenConfig>()
-            .unwrap_or_else(|e| {
-                js_sys::eval("alert('Diogen config load failed.')").unwrap();
-                panic!("{}", e);
-            })
-    })
-    .get()
-    .clone();
+    let config = use_future(&cx, (), |()| async move {
+        if let Ok(resp) = Request::get("/diogen.json").send().await {
+            let res = resp.json::<DiogenConfig>().await;
+            if res.is_err() {
+                js_sys::eval("alert('load config failed.')").unwrap();
+                panic!("load config failed");
+            }
+            res.unwrap()
+        } else {
+            js_sys::eval("alert('load config failed.')").unwrap();
+            panic!("load config failed");
+        }
+    });
+
+    if config.value().is_none() {
+        return cx.render(rsx! {
+            div {
+                style: "text-align: center;",
+                h1 { "loading..." }
+            }
+        });
+    }
 
     // 因为会常常使用到 config 信息，所以说通过 context 将它传递
     // 这种方案要比 props 传递更加方便
+    let config = config.value().unwrap();
     use_context_provider(&cx, || config.clone());
-
-    let Homepage = if &config.theme == "blog" {
-        themes::blog::Homepage
-    } else {
-        themes::docs::Homepage
-    };
 
     cx.render(rsx! {
         style { "html::-webkit-scrollbar {{display: none;}}" }
@@ -57,7 +64,7 @@ fn app(cx: Scope) -> Element {
         match router.as_str() {
             "/" => {
                 rsx! {
-                    Homepage {}
+                    pages::HomePage {}
                 }
             }
             "/@skip" => {

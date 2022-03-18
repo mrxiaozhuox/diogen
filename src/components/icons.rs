@@ -235,7 +235,7 @@ pub fn get_solid_icon(name: &str) -> Option<solid::Shape> {
     }
 }
 
-pub fn get_outline_icon(name: &str) -> Option<outline::Shape> {
+pub fn _get_outline_icon(name: &str) -> Option<outline::Shape> {
     match name {
         "academic-cap" => Some(outline::Shape::AcademicCap),
         "adjustments" => Some(outline::Shape::Adjustments),

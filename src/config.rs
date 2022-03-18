@@ -4,9 +4,6 @@ use serde::{Deserialize, Serialize};
 pub struct DiogenConfig {
     pub title: String,
 
-    #[serde(default = "default_theme")]
-    pub theme: String,
-
     #[serde(default = "default_root")]
     pub root: String,
 
@@ -24,10 +21,6 @@ pub struct NavInfo {
 
     #[serde(default = "nav_default_target")]
     pub target: String,
-}
-
-fn default_theme() -> String {
-    String::from("blog")
 }
 
 fn default_root() -> String {

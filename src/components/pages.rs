@@ -1,10 +1,12 @@
 use dioxus::prelude::*;
 
-use crate::{config::DiogenConfig, component::Link};
+use crate::{components::link::Link, config::DiogenConfig};
 
-pub fn Homepage(cx: Scope) -> Element {
+
+
+pub fn HomePage(cx: Scope) -> Element {
     let config = use_context::<DiogenConfig>(&cx).unwrap();
-    let config = config.read();
+    let _config = config.read();
 
     cx.render(rsx! {
         div {
