@@ -3,6 +3,7 @@
 mod components;
 mod config;
 mod router;
+mod posts;
 
 use crate::components::{nav::TopBar, pages};
 use dioxus::prelude::*;
