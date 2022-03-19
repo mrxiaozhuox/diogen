@@ -7,6 +7,9 @@ pub struct DiogenConfig {
     #[serde(default = "default_root")]
     pub root: String,
 
+    #[serde(default)]   
+    pub git_repo: String,
+
     #[serde(default)]
     pub nav: Vec<NavInfo>,
 }
