@@ -4,6 +4,13 @@
 
   "root": "/",
 
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/mrxiaozhuox/diogen/",
+    "root": "/docs/",
+    "substitute": true
+  },
+
   "nav": [
     {
       "text": "Home",

@@ -9,14 +9,21 @@ use crate::{
 
 pub fn HomePage(cx: Scope) -> Element {
     let config = use_context::<DiogenConfig>(&cx).unwrap();
-    let _config = config.read();
+    let config = config.read();
+
+    let repo = config.repository.clone().unwrap();
+    return cx.render(rsx! {
+        [ repo.get_raw_path().unwrap() ]
+    });
 
     let v = use_future(&cx, (), |_| async {
         let list = get_post_index().await;
         let mut result = vec![];
         for ar in list {
             let meta = get_post_meta(&ar).await;
-            result.push(meta);
+            if let Some(meta) = meta {
+                result.push(meta);
+            }
         }
         result
     });
@@ -25,9 +32,8 @@ pub fn HomePage(cx: Scope) -> Element {
         Some(res) => {
             let ls = res
                 .iter()
-                .filter(|v| v.is_some())
-                .map(|v| {
-                    let meta = v.clone().unwrap();
+                .map(|meta| {
+                    let meta = meta.clone();
                     let tags = meta.tags.join(" , ");
                     let categories = meta.categories.join(" | ");
                     rsx! {
@@ -93,13 +99,19 @@ pub fn HomePage(cx: Scope) -> Element {
                                 }
                             }
                         }
+                        br {}
                     }
                 });
             cx.render(rsx! {
                 ls
             })
         }
-        None => cx.render(rsx! { strong { "Loading..." } }),
+        None => cx.render(rsx! {
+            div {
+                style: "text-align: center;",
+                strong { "Loading..." }
+            }
+        }),
     };
 
     cx.render(rsx! {

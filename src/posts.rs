@@ -30,6 +30,9 @@ pub async fn get_post_meta(name: &str) -> Option<ArticleMeta> {
         return None;
     }
     let resp = resp.unwrap();
+    if resp.status() != 200 {
+        return None;
+    }
 
     let text = resp.text().await.unwrap();
 
