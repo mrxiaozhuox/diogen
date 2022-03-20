@@ -24,8 +24,10 @@ pub struct ArticleMeta {
     pub categories: Vec<String>,
 }
 
-pub async fn get_post_meta(name: &str) -> Option<ArticleMeta> {
-    let resp = Request::get(&format!("/posts/{name}")).send().await;
+pub async fn get_post_meta(name: &str, raw_path: &str) -> Option<ArticleMeta> {
+    let resp = Request::get(&format!("{raw_path}posts/{name}"))
+        .send()
+        .await;
     if resp.is_err() {
         return None;
     }
@@ -54,7 +56,11 @@ pub async fn get_post_meta(name: &str) -> Option<ArticleMeta> {
     let mut content = res.1.replace("\n", "");
 
     if content.len() > 350 {
-        let temp = content.chars().into_iter().map(|x| x.to_string()).collect::<Vec<_>>();
+        let temp = content
+            .chars()
+            .into_iter()
+            .map(|x| x.to_string())
+            .collect::<Vec<_>>();
         content = temp[0..350].concat();
     }
 

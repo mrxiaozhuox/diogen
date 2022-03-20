@@ -42,15 +42,20 @@ impl RepositoryInfo {
                     let mut new_url = Url::parse("https://raw.githubusercontent.com/")?;
                     new_url = new_url.join(url_path)?;
                     new_url = new_url.join(&format!("{}/", &self.branch))?;
+
+                    let mut root = self.root.clone();
+                    if &root[0..1] == "/" {
+                        root = root[1..].to_string();
+                    }
+                    if &root[root.len() - 1..] != "/" {
+                        root = format!("{root}/");
+                    }
+                    new_url = new_url.join(&root)?;
+
                     new_url.to_string()
                 },
                 _ => url.join(self.root.as_str())?.to_string(),
             }
         )
-    }
-
-    pub fn request(&self) -> anyhow::Result<()> {
-        log::info!("{:?}", self.get_raw_path());
-        Ok(())
     }
 }
