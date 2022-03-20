@@ -1,4 +1,3 @@
-use reqwasm::http::{Response, Request};
 use serde::{Serialize, Deserialize};
 use url::Url;
 

@@ -6,7 +6,7 @@ mod router;
 mod posts;
 mod repository;
 
-use crate::components::{nav::TopBar, pages};
+use crate::components::{nav::TopBar, pages, link::Link};
 use dioxus::prelude::*;
 use reqwasm::http::Request;
 
@@ -42,14 +42,7 @@ fn app(cx: Scope) -> Element {
         }
     });
 
-    if config.value().is_none() {
-        return cx.render(rsx! {
-            div {
-                style: "text-align: center;",
-                h1 { "loading..." }
-            }
-        });
-    }
+    config.value()?;
 
     // 因为会常常使用到 config 信息，所以说通过 context 将它传递
     // 这种方案要比 props 传递更加方便
@@ -75,8 +68,42 @@ fn app(cx: Scope) -> Element {
                 }
             }
             _v => {
-                rsx! { "404 Not Found" }
+                rsx! {
+                    div {
+                        style: "text-align: center;",
+                        h3 {
+                            class: "title is-3",
+                            "404 Not Found"
+                        }
+                        p {
+                            h5 {
+                                class: "subtitle is-5",
+                                Link {
+                                    to: "/",
+                                    "To Home Page"
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
+
+        footer {
+            class: "footer",
+            div {
+                class: "content has-text-centered",
+                p {
+                    "Powered by "
+                    strong {
+                        a {
+                            href: "https://diogen.mrxzx.info/",
+                            "Diogen"
+                        }
+                    }
+                }
+            }
+        }
+
     })
 }
