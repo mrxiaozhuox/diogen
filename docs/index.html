@@ -5,6 +5,7 @@
     <meta charset="UTF-8" />
     <meta content="width=device-width,user-scalable=no" name="viewport">
     <link rel="stylesheet" href="./assets/bulma.min.css">
+<link rel="stylesheet" href="./assets/highlight@default.min.css">
 
   </head>
   <body>
@@ -13,6 +14,33 @@
       import init from "./assets/dioxus/diogen.js";
       init("./assets/dioxus/diogen_bg.wasm");
     </script>
-    
+    <script src="./assets/highlight.min.js"></script>
+<script src="./assets/marked.min.js"></script>
+
   </body>
 </html>
+<script>// Dioxus-CLI
+// https://github.com/DioxusLabs/cli
+
+(function () {
+  var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  var url = protocol + '//' + window.location.host + '/_dioxus/ws';
+  var poll_interval = 8080;
+  var reload_upon_connect = () => {
+      window.setTimeout(
+          () => {
+              var ws = new WebSocket(url);
+              ws.onopen = () => window.location.reload();
+              ws.onclose = reload_upon_connect;
+          },
+          poll_interval);
+  };
+
+  var ws = new WebSocket(url);
+  ws.onmessage = (ev) => {
+      if (ev.data == "reload") {
+          window.location.reload();
+      }
+  };
+  ws.onclose = reload_upon_connect;
+})()</script>

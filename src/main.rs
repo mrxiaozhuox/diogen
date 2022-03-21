@@ -2,13 +2,15 @@
 
 mod components;
 mod config;
-mod router;
 mod posts;
 mod repository;
+mod router;
+mod storage;
 
-use crate::components::{nav::TopBar, pages, link::Link};
+use crate::components::{nav::TopBar, pages};
 use dioxus::prelude::*;
 use reqwasm::http::Request;
+use storage::StorageInfo;
 
 use crate::config::DiogenConfig;
 
@@ -48,6 +50,7 @@ fn app(cx: Scope) -> Element {
     // 这种方案要比 props 传递更加方便
     let config = config.value().unwrap();
     use_context_provider(&cx, || config.clone());
+    use_context_provider(&cx, StorageInfo::default);
 
     cx.render(rsx! {
         style { "html::-webkit-scrollbar {{display: none;}}" }
@@ -58,34 +61,30 @@ fn app(cx: Scope) -> Element {
         // 我需要的路径控制主要在 /#/ 之后
         match router.as_str() {
             "/" => {
-                rsx! {
-                    pages::HomePage {}
-                }
+                cx.render(
+                    rsx! {
+                        pages::HomePage {}
+                    }
+                )
             }
             "/@skip" => {
-                rsx! {
-                    div { "S" }
-                }
-            }
-            _v => {
-                rsx! {
-                    div {
-                        style: "text-align: center;",
-                        h3 {
-                            class: "title is-3",
-                            "404 Not Found"
-                        }
-                        p {
-                            h5 {
-                                class: "subtitle is-5",
-                                Link {
-                                    to: "/",
-                                    "To Home Page"
-                                }
-                            }
+                cx.render(
+                    rsx! {
+                        div {
+                            style: "text-align: center;",
+                            "Waiting for the jump!"
                         }
                     }
-                }
+                )
+            }
+            path => {
+                cx.render(
+                    rsx! {
+                        router::DynPath {
+                            path: path
+                        }
+                    }
+                )
             }
         }
 

@@ -2,6 +2,7 @@ use std::collections::HashMap;
 
 use markdown_meta_parser::Value;
 use reqwasm::http::Request;
+use serde::{Deserialize, Serialize};
 
 pub async fn get_post_index() -> Vec<String> {
     if let Ok(resp) = Request::get("/posts/index.json").send().await {
@@ -15,16 +16,18 @@ pub async fn get_post_index() -> Vec<String> {
     vec![]
 }
 
-#[derive(Debug, Clone)]
-pub struct ArticleMeta {
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ArticleInfo {
+    pub sign_name: String,
     pub title: String,
     pub date: String,
     pub tags: Vec<String>,
     pub description: String,
-    pub categories: Vec<String>,
+    pub category: String,
+    pub content: String,
 }
 
-pub async fn get_post_meta(name: &str, raw_path: &str) -> Option<ArticleMeta> {
+pub async fn get_post(name: &str, raw_path: &str) -> Option<ArticleInfo> {
     let resp = Request::get(&format!("{raw_path}posts/{name}"))
         .send()
         .await;
@@ -40,7 +43,6 @@ pub async fn get_post_meta(name: &str, raw_path: &str) -> Option<ArticleMeta> {
 
     let mut type_mark = HashMap::new();
     type_mark.insert("tags".into(), "Array");
-    type_mark.insert("categories".into(), "Array");
     let meta = markdown_meta_parser::MetaData {
         content: text,
         required: vec![],
@@ -55,12 +57,12 @@ pub async fn get_post_meta(name: &str, raw_path: &str) -> Option<ArticleMeta> {
 
     let mut content = res.1.replace("\n", "");
 
-    if content.len() > 350 {
-        let temp = content
-            .chars()
-            .into_iter()
-            .map(|x| x.to_string())
-            .collect::<Vec<_>>();
+    let temp = content
+    .chars()
+    .into_iter()
+    .map(|x| x.to_string())
+    .collect::<Vec<_>>();
+    if temp.len() > 350 {
         content = temp[0..350].concat();
     }
 
@@ -93,18 +95,24 @@ pub async fn get_post_meta(name: &str, raw_path: &str) -> Option<ArticleMeta> {
     } else {
         content
     };
-    let categories =
-        if let Value::Array(arr) = map.get("categories").unwrap_or(&Value::Array(vec![])) {
-            arr.clone()
-        } else {
-            vec![]
-        };
+    let category = if let Value::String(s) = map
+        .get("category")
+        .unwrap_or(&Value::String("Default".to_string()))
+    {
+        s.clone()
+    } else {
+        String::from("Default")
+    };
 
-    Some(ArticleMeta {
+    let sign_name = base64::encode(name.as_bytes());
+
+    Some(ArticleInfo {
+        sign_name,
         title,
         date,
         tags,
         description,
-        categories,
+        category,
+        content: res.1
     })
 }

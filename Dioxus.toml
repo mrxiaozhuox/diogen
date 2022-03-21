@@ -32,11 +32,15 @@ watch_path = [
 # CSS style file
 style = [
     # "https://cdn.bootcdn.net/ajax/libs/pure/2.0.6/pure.min.css",
-    "./assets/bulma.min.css"
+    "./assets/bulma.min.css",
+    "./assets/highlight@default.min.css"
 ]
 
 # Javascript code file
-script = []
+script = [
+    "./assets/highlight.min.js",
+    "./assets/marked.min.js"
+]
 
 [web.resource.dev]
 
