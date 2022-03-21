@@ -1,8 +1,15 @@
 {
   "title": "Diogen Website",
-  "theme": "blog",
-
+  "author": "YuKun Liu",
   "root": "/",
+
+  "theme": {
+    "about": {
+      "type": "text",
+      "url": "https://v1.hitokoto.cn/?encode=text&c=i&c=d",
+      "title": "\"Do not for one repulse forgot the purpose that you resolved to effort. \""
+    }
+  },
 
   "repository": {
     "type": "github",

@@ -6,6 +6,7 @@ mod posts;
 mod repository;
 mod router;
 mod storage;
+mod theme;
 
 use crate::components::{nav::TopBar, pages};
 use dioxus::prelude::*;
@@ -35,7 +36,8 @@ fn app(cx: Scope) -> Element {
             let res = resp.json::<DiogenConfig>().await;
             if res.is_err() {
                 js_sys::eval("alert('load config failed.')").unwrap();
-                panic!("load config failed");
+                let error = res.err().unwrap();
+                panic!("load config failed: {error}");
             }
             res.unwrap()
         } else {
@@ -53,8 +55,6 @@ fn app(cx: Scope) -> Element {
     use_context_provider(&cx, StorageInfo::default);
 
     cx.render(rsx! {
-        style { "html::-webkit-scrollbar {{display: none;}}" }
-
         TopBar {}
 
         // 自制路由系统，因为 Dioxus 原生的路由无法满足我的需求

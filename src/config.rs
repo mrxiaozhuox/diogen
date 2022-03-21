@@ -3,9 +3,13 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct DiogenConfig {
     pub title: String,
+    pub author: String,
 
     #[serde(default = "default_root")]
     pub root: String,
+
+    #[serde(default)]
+    pub theme: crate::theme::ThemeInfo,
 
     #[serde(default)]
     pub repository: Option<crate::repository::RepositoryInfo>,

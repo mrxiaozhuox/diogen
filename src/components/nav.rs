@@ -1,5 +1,6 @@
 use dioxus::prelude::*;
 use dioxus_heroicons::Icon;
+use reqwasm::http::Request;
 use crate::components::link::Link;
 use crate::config::DiogenConfig;
 
@@ -47,10 +48,11 @@ pub fn TopBar(cx: Scope) -> Element {
         }
     });
 
-    cx.render(rsx!(
+    let config = config.clone();
+    let nav = cx.render(rsx!(
         nav {
 
-            class: "navbar is-link is-fixed-top",
+            class: "navbar is-info is-fixed-top",
             role: "navigation",
 
             div {
@@ -87,8 +89,67 @@ pub fn TopBar(cx: Scope) -> Element {
             }
 
         }
+        
         br {}
         br {}
         br {}
-    ))
+    ));
+
+
+    if curr_route == "/" {
+        let theme_info = &config.theme;
+        let theme_about = theme_info.about.clone();
+
+        let title = use_future(&cx, (), |_| {
+            async move {
+                if theme_about.r#type == "text" {
+                    return (theme_about.title, theme_about.subtitle);
+                } else if theme_about.r#type == "api:text" {
+                    let api_url = theme_about.url.clone();
+                    if let Ok(resp) = Request::get(&api_url).send().await {
+                        if let Ok(str) = resp.text().await {
+                            return (str, String::new());
+                        }
+                    }
+                }
+                (String::new(), String::new())
+            }
+        });
+
+        let title = if let Some(v) = title.value() {
+            v.clone()
+        } else {
+            (String::new(), String::new())
+        };
+
+        return cx.render(rsx! {
+            section {
+                class: "hero is-info is-fullheight",
+                div {
+                    class: "hero-head",
+                    nav
+                }
+                div {
+                    class: "hero-body",
+                    div {
+                        class: "container has-text-centered",
+                        p {
+                            class: "title",
+                            "{title.0}"
+                        }
+                        p {
+                            class: "subtitle",
+                            "{title.1}"
+                        }
+                    }
+                }
+                div {
+                    class: "hero-foot",
+                }
+            }
+            br {}
+        });
+    }
+
+    nav
 }

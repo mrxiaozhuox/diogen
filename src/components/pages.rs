@@ -42,7 +42,7 @@ pub fn HomePage(cx: Scope) -> Element {
                 let meta = meta.clone();
 
                 // 这里需要统计 tags 和 category 用于渲染 tags list 和 category list 页面
-                let tags = meta.tags.join(" , ");
+                let tags = meta.tags.join(" ");
 
                 storage_info
                     .write()
@@ -73,7 +73,7 @@ pub fn HomePage(cx: Scope) -> Element {
                                     }
                                     p {
                                         class: "subtitle is-6",
-                                        "Date - {meta.date}"
+                                        "# {meta.date}"
                                     }
                                 }
                             }
