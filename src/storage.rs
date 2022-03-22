@@ -33,7 +33,23 @@ impl StorageInfo {
         }
     }
 
-    pub fn save_article(&mut self, sign_name: &str, article: ArticleInfo) {
+    pub fn cache_article(&mut self, sign_name: &str, article: ArticleInfo) {
         self.article_content.insert(sign_name.to_string(), article);
+    }
+
+    pub fn storage_all(&self) {
+        let local_stroage = web_sys::window().unwrap().local_storage().unwrap().unwrap();
+
+        let mut need_storage: StorageInfo = self.clone();
+        // We don't need storage ArticleInfo into localstorage, because the data is very big!
+        need_storage.article_content = HashMap::new();
+
+        local_stroage.set_item("diogen-archive", &serde_json::to_string(&self).unwrap()).unwrap();
+    }
+
+    pub fn load_all() -> Self {
+        let local_stroage = web_sys::window().unwrap().local_storage().unwrap().unwrap();
+        let v = local_stroage.get_item("diogen-archive").unwrap().unwrap();
+        serde_json::from_str::<Self>(&v).unwrap()
     }
 }

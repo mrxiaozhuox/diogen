@@ -9,6 +9,9 @@ pub struct DiogenConfig {
     pub root: String,
 
     #[serde(default)]
+    pub debug: bool,
+
+    #[serde(default)]
     pub theme: crate::theme::ThemeInfo,
 
     #[serde(default)]

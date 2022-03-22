@@ -3,6 +3,8 @@
   "author": "YuKun Liu",
   "root": "/",
 
+  "debug": true,
+
   "theme": {
     "about": {
       "type": "text",

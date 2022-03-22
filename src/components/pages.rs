@@ -38,15 +38,15 @@ pub fn HomePage(cx: Scope) -> Element {
 
     let article_list = match v.value() {
         Some(res) => {
-            let ls = res.iter().map(|meta| {
+            let ls = res.iter().rev().map(|meta| {
                 let meta = meta.clone();
 
                 // 这里需要统计 tags 和 category 用于渲染 tags list 和 category list 页面
-                let tags = meta.tags.join(" ");
+                let tags = meta.tags.join("  ");
 
                 storage_info
                     .write()
-                    .save_article(&meta.sign_name, meta.clone());
+                    .cache_article(&meta.sign_name, meta.clone());
 
                 storage_info
                     .write()
@@ -54,6 +54,8 @@ pub fn HomePage(cx: Scope) -> Element {
                 storage_info
                     .write()
                     .cache_category(&meta.sign_name, meta.category.clone());
+
+                storage_info.read().storage_all();
 
                 rsx! {
                     div {
@@ -149,6 +151,7 @@ pub fn ArticleDisplay(cx: Scope, sign_name: String) -> Element {
     let storage_info = use_context::<crate::storage::StorageInfo>(&cx).unwrap();
     let info = storage_info.read();
     let articles = info.article_content.clone();
+    drop(info);
 
     let sign_name = sign_name.clone();
     let repo = config.repository.clone().unwrap();
@@ -165,7 +168,7 @@ pub fn ArticleDisplay(cx: Scope, sign_name: String) -> Element {
                 let meta = get_post(&file_name, &raw_path).await;
 
                 if meta.is_none() {
-                    // 如果直接获取 POST Meta 失败，尝试使用 Repo
+                    // if can't load meta from current path, try to load from repo.
                     let meta = get_post(&file_name, &repo.get_raw_path().unwrap()).await;
                     meta
                 } else {
@@ -177,6 +180,8 @@ pub fn ArticleDisplay(cx: Scope, sign_name: String) -> Element {
     });
 
     if let Some(info) = r.value() {
+
+        // if article is none, render 404 page.
         if info.is_none() {
             return cx.render(rsx! {
                 crate::pages::_404 {}
@@ -184,6 +189,7 @@ pub fn ArticleDisplay(cx: Scope, sign_name: String) -> Element {
         }
 
         let info = info.as_ref().unwrap();
+        storage_info.write().cache_article(&info.sign_name, info.clone());
         return cx.render(rsx! {
             div {
                 class: "container",

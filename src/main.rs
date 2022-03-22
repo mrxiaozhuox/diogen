@@ -32,6 +32,7 @@ fn app(cx: Scope) -> Element {
 
     // 当 APP 组件第一次被运行时，会加载配置文件并更新信息
     let config = use_future(&cx, (), |()| async move {
+        js_sys::eval("console.log('Diogen by YuKun Liu [https://github.com/mrxiaozhuox/]');").unwrap();
         if let Ok(resp) = Request::get("/diogen.json").send().await {
             let res = resp.json::<DiogenConfig>().await;
             if res.is_err() {

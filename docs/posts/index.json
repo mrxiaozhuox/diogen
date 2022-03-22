@@ -1,3 +1,11 @@
 [
-    "hello.md"
+    "hello.md",
+    "dorea-introduction.md",
+    "dorea-design-doc.md",
+    "dioxus-intro.md",
+    "dioxus-for-desktop.md",
+    "dioxus-hooks-intro.md",
+    "dioxus-0-2-release.md",
+    "dorea-ws-support.md",
+    "diogen-blog-intro.md"
 ]

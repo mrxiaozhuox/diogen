@@ -89,10 +89,6 @@ pub fn TopBar(cx: Scope) -> Element {
             }
 
         }
-        
-        br {}
-        br {}
-        br {}
     ));
 
 
@@ -123,12 +119,9 @@ pub fn TopBar(cx: Scope) -> Element {
         };
 
         return cx.render(rsx! {
+            nav
             section {
-                class: "hero is-info is-fullheight",
-                div {
-                    class: "hero-head",
-                    nav
-                }
+                class: "hero is-info is-fullheight is-fullheight-with-navbar",
                 div {
                     class: "hero-body",
                     div {
@@ -151,5 +144,8 @@ pub fn TopBar(cx: Scope) -> Element {
         });
     }
 
-    nav
+    cx.render(rsx! {
+        nav   
+        br {}
+    })
 }
