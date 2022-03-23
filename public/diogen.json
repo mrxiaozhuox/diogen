@@ -5,6 +5,20 @@
 
   "debug": true,
 
+  "deploy": {
+    "scheme": [
+      {
+        "domain": "diogen.mrxzx.info",
+        "request": "/"
+      },
+      {
+        "domain": ["127.0.0.1", "localhost"],
+        "port": 8080,
+        "request": "#repo:raw"
+      }
+    ]
+  },
+
   "theme": {
     "about": {
       "type": "text",

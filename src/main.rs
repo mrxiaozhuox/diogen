@@ -7,6 +7,7 @@ mod repository;
 mod router;
 mod storage;
 mod theme;
+mod deploy;
 
 use crate::components::{nav::TopBar, pages};
 use dioxus::prelude::*;
