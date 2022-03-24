@@ -2,7 +2,7 @@
 title: Dioxus 项目介绍
 date: 2022-01-16 18:10:18
 tags: [Dioxus]
-categories: Rust
+category: Rust
 ---
 
 很久没写博客了，最近在参加一个比较有意思的项目开发：[`Dioxus`](https://dioxuslabs.com/)

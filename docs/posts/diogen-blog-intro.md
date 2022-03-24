@@ -2,7 +2,7 @@
 title: Diogen 静态博客包
 date: 2022-03-18 23:04:29
 tags: [Dioxus, Diogen]
-categories: Rust
+category: Rust
 ---
 
 最近 `Dioxus` 0.2 发布了，我寻思着也使用这个版本做点啥小项目玩玩：[Diogen | static blog generator](https://github.com/mrxiaozhuox/diogen)

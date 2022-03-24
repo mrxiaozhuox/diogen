@@ -2,7 +2,7 @@
 title: DoreaDB 预览版发布
 date: 2021-09-27 23:40:33
 tags: [Dorea]
-categories: Rust
+category: Rust
 ---
 
 在昨天晚上，我发布了 `DoreaDB` 数据库的最新预览版本：`v0.3.0-alpha`

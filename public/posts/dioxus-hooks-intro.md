@@ -2,7 +2,7 @@
 title: Dioxus Hooks 设计研究
 date: 2022-03-06 14:44:46
 tags: [Dioxus, Hooks]
-categories: Rust
+category: Rust
 ---
 
 > 本篇我们将分析 Dioxus 中的 Hooks 设计，Hooks 借鉴自 React，它也是整个 Dioxus 中最重要的部分之一

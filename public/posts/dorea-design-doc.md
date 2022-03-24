@@ -2,7 +2,7 @@
 title: DoreaDB 设计文档
 date: 2021-12-23 00:12:51
 tags: [Dorea]
-categories: Rust
+category: Rust
 ---
 
 > 近期在 Dorea 的开发过程中拥有一些独立的思考和设计方案，记录在此。（持续更新）

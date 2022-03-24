@@ -2,7 +2,7 @@
 title: Dioxus 桌面应用 杂谈
 date: 2022-03-06 11:22:44
 tags: [Dioxus, Desktop]
-categories: Rust
+category: Rust
 ---
 
 > 做为一名 Dioxus 项目的贡献者，我也在不断的学习中。所以在本篇中来简单聊聊 Dioxus 对于桌面平台的开发设计。

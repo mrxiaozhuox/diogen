@@ -2,7 +2,7 @@
 title: DoreaDB WebSocket 通道支持
 date: 2022-03-10 00:01:34
 tags: [Dorea, WebSocket]
-categories: Rust
+category: Rust
 ---
 
 之前在 `DoreaDB` 设计笔录中就聊到过，目前完成的 `Service` 性能并不好，仅仅因为它方便。

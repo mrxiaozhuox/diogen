@@ -2,7 +2,7 @@
 title: Dioxus 0.2 版本发布
 date: 2022-03-13 13:28:08
 tags: Dioxus
-categories: Rust
+category: Rust
 ---
 
 `Dioxus` 近期发布了 **0.2** 的新版本，贴一份原文地址：[Dioxus 0.2 Release: TUI, Router, Fermi, and Tooling](https://dioxuslabs.com/blog/release-020/)

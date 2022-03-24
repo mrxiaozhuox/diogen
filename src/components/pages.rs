@@ -52,6 +52,7 @@ pub fn HomePage(cx: Scope) -> Element {
                 rsx! {
                     div {
                         class: "card",
+                        "key": "123",
                         div {
                             class: "card-content",
                             div {
@@ -253,7 +254,7 @@ pub fn _404(cx: Scope) -> Element {
 }
 
 pub fn Tags(cx: Scope) -> Element {
-    let storage_info = StorageInfo::load_all();
+    let storage_info = StorageInfo::load_all().unwrap();
 
     // return cx.render(rsx! {
     //     "{storage_info:?}",

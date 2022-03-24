@@ -29,7 +29,9 @@ impl StorageInfo {
     pub fn cache_category(&mut self, article: &str, category: String) {
         if self.category.contains_key(&category) {
             let category = self.category.get_mut(&category).unwrap();
-            category.push(article.to_string());
+            if !category.contains(&article.to_string()) {
+                category.push(article.to_string());
+            }
         } else {
             self.category.insert(category, vec![article.to_string()]);
         }
@@ -46,12 +48,17 @@ impl StorageInfo {
         // We don't need storage ArticleInfo into localstorage, because the data is very big!
         need_storage.article_content = HashMap::new();
 
-        local_stroage.set_item("diogen-archive", &serde_json::to_string(&self).unwrap()).unwrap();
+        local_stroage
+            .set_item(
+                "diogen-archive",
+                &serde_json::to_string(&need_storage).unwrap(),
+            )
+            .unwrap();
     }
 
-    pub fn load_all() -> Self {
-        let local_stroage = web_sys::window().unwrap().local_storage().unwrap().unwrap();
-        let v = local_stroage.get_item("diogen-archive").unwrap().unwrap();
-        serde_json::from_str::<Self>(&v).unwrap()
+    pub fn load_all() -> Option<Self> {
+        let local_stroage = web_sys::window()?.local_storage().ok()??;
+        let v = local_stroage.get_item("diogen-archive").ok()??;
+        serde_json::from_str::<Self>(&v).ok()
     }
 }

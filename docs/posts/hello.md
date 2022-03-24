@@ -1,7 +1,8 @@
 ---
 title: Hello World
 date: 2022-03-21
-tags: [test]
+tags: [Test]
+category: Default
 ---
 
 Dioxus is a portable, performant, and ergonomic framework for building cross-platform user interfaces in Rust.
