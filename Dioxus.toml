@@ -38,6 +38,7 @@ style = [
 
 # Javascript code file
 script = [
+    "./assets/total.js",
     "./assets/highlight.min.js",
     "./assets/marked.min.js"
 ]

@@ -155,8 +155,6 @@ pub fn ArticleDisplay(cx: Scope, sign_name: String) -> Element {
             } else {
                 let file_name = base64::decode(sign_name.as_str()).unwrap_or_default();
                 let file_name = String::from_utf8(file_name).unwrap_or_default();
-
-                let raw_path = config.root.clone();
                 post_getter.get_post(&file_name).await
             };
             info

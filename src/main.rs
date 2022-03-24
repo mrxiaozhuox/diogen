@@ -59,6 +59,8 @@ fn app(cx: Scope) -> Element {
     cx.render(rsx! {
         TopBar {}
 
+        script { [include_str!("./assets/inline.js")] }
+
         // 自制路由系统，因为 Dioxus 原生的路由无法满足我的需求
         // 我需要的路径控制主要在 /#/ 之后
         match router.as_str() {
