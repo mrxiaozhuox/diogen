@@ -4,6 +4,43 @@ use markdown_meta_parser::Value;
 use reqwasm::http::Request;
 use serde::{Deserialize, Serialize};
 
+use crate::config::DiogenConfig;
+
+pub struct PostGetter {
+    pub config: DiogenConfig,
+}
+
+impl PostGetter {
+
+    #[allow(clippy::let_and_return)]
+    fn get_root_path(&self) -> String {
+        let deploy_scheme = self.config.deploy.current_scheme();
+        let deploy_scheme = match deploy_scheme {
+            Some(v) => v,
+            None => return String::from("/"),
+        };
+        let request = deploy_scheme.request;
+
+        let repo_info = &self.config.repository;
+        let mut repo_raw_path = match repo_info {
+            Some(v) => v.get_raw_path().unwrap(),
+            None => String::new(),
+        };
+        if repo_raw_path.ends_with('/') {
+            repo_raw_path = repo_raw_path[..repo_raw_path.len() - 1].to_string();
+        }
+        
+        let result = request;
+        let result = result.replace("#{repo:raw}", &repo_raw_path);
+
+        result
+    }
+
+    pub async fn _get_post_index(&self) -> Vec<String> {
+        todo!()
+    }
+}
+
 pub async fn get_post_index() -> Vec<String> {
     if let Ok(resp) = Request::get("/posts/index.json").send().await {
         let r = resp.json::<Vec<String>>().await;
@@ -55,7 +92,7 @@ pub async fn get_post(name: &str, raw_path: &str) -> Option<ArticleInfo> {
     }
     let res = res.unwrap();
 
-    let mut content = res.1.replace("\n", "");
+    let mut content = res.1.replace('\n', "");
 
     let temp = content
     .chars()

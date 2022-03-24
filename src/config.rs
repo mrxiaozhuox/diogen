@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::deploy::DeployInfo;
+
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct DiogenConfig {
     pub title: String,
@@ -11,8 +13,8 @@ pub struct DiogenConfig {
     #[serde(default)]
     pub debug: bool,
 
-    #[serde(default)]
-    pub deploy_on: String,
+    #[serde(default = "deploy_default")]
+    pub deploy: DeployInfo,
 
     #[serde(default)]
     pub theme: crate::theme::ThemeInfo,
@@ -22,6 +24,10 @@ pub struct DiogenConfig {
 
     #[serde(default)]
     pub nav: Vec<NavInfo>,
+}
+
+fn deploy_default() -> DeployInfo {
+    DeployInfo { scheme: Default::default() }
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]

@@ -11,7 +11,7 @@ pub fn HomePage(cx: Scope) -> Element {
     let config = use_context::<DiogenConfig>(&cx).unwrap();
     let config = config.read();
 
-    let repo = config.repository.clone().unwrap();
+    // let repo = config.repository.clone().unwrap();
     let config = config.clone();
     let v = use_future(&cx, (), |_| async move {
         let list = get_post_index().await;
@@ -23,12 +23,6 @@ pub fn HomePage(cx: Scope) -> Element {
 
             if let Some(meta) = meta {
                 result.push(meta);
-            } else if repo.substitute {
-                // 如果直接获取 POST Meta 失败，尝试使用 Repo
-                let meta = get_post(&ar, &repo.get_raw_path().unwrap()).await;
-                if let Some(meta) = meta {
-                    result.push(meta);
-                }
             }
         }
         result
