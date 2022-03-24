@@ -17,7 +17,9 @@ impl StorageInfo {
         for tag in tags {
             if self.tags.contains_key(&tag) {
                 let tags = self.tags.get_mut(&tag).unwrap();
-                tags.push(article.to_string());
+                if !tags.contains(&article.to_string()) {
+                    tags.push(article.to_string());
+                }
             } else {
                 self.tags.insert(tag, vec![article.to_string()]);
             }

@@ -15,12 +15,18 @@ pub fn url_to_route(url: &str) -> String {
 #[inline_props]
 pub fn DynPath<'a>(cx: Scope<'a>, path: &'a str) -> Element {
 
-    if &path[0..3] == "/p/" {
-        let sign_name = path[3..].to_string();
+    if path.len() > 10 && &path[0..10] == "/articles/" {
+        let sign_name = path[10..].to_string();
         return cx.render(rsx! {
             crate::components::pages::ArticleDisplay {
                 sign_name: sign_name,
             }
+        });
+    }
+
+    if *path == "/tags" {
+        return cx.render(rsx! {
+            crate::components::pages::Tags {}
         });
     }
 

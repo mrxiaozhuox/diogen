@@ -2,9 +2,7 @@ use dioxus::prelude::*;
 use dioxus_heroicons::{solid::Shape, Icon};
 
 use crate::{
-    components::link::Link,
-    config::DiogenConfig,
-    posts::PostGetter,
+    components::link::Link, config::DiogenConfig, posts::PostGetter, storage::StorageInfo,
 };
 
 pub fn HomePage(cx: Scope) -> Element {
@@ -14,7 +12,9 @@ pub fn HomePage(cx: Scope) -> Element {
     // let repo = config.repository.clone().unwrap();
     let config = config.clone();
     let v = use_future(&cx, (), |_| async move {
-        let post_getter = PostGetter { config: config.clone() };
+        let post_getter = PostGetter {
+            config: config.clone(),
+        };
         let list = post_getter.get_post_index().await;
         let mut result = vec![];
         for ar in list {
@@ -61,7 +61,7 @@ pub fn HomePage(cx: Scope) -> Element {
                                     p {
                                         class: "title is-4",
                                         Link {
-                                            to: "/p/{meta.sign_name}",
+                                            to: "/articles/{meta.sign_name}",
                                             "{meta.title}"
                                         }
                                     }
@@ -117,6 +117,19 @@ pub fn HomePage(cx: Scope) -> Element {
             });
             cx.render(rsx! {
                 ls
+                nav {
+                    class: "pagination is-centered is-rounded",
+                    role: "navigation",
+                    a {
+                        class: "pagination-previous",
+                        "Previous"
+                    }
+                    a {
+                        class: "pagination-next",
+                        "Next page"
+                    }
+                }
+                br {}
             })
         }
         None => cx.render(rsx! {
@@ -148,7 +161,9 @@ pub fn ArticleDisplay(cx: Scope, sign_name: String) -> Element {
     let sign_name = sign_name.clone();
     let config = config.clone();
     let r = use_future(&cx, (), |_| {
-        let post_getter = PostGetter { config: config.clone() };
+        let post_getter = PostGetter {
+            config: config.clone(),
+        };
         async move {
             let info = if articles.contains_key(&sign_name) {
                 Some(articles.get(&sign_name).unwrap().clone())
@@ -162,7 +177,6 @@ pub fn ArticleDisplay(cx: Scope, sign_name: String) -> Element {
     });
 
     if let Some(info) = r.value() {
-
         // if article is none, render 404 page.
         if info.is_none() {
             return cx.render(rsx! {
@@ -171,7 +185,9 @@ pub fn ArticleDisplay(cx: Scope, sign_name: String) -> Element {
         }
 
         let info = info.as_ref().unwrap();
-        storage_info.write().cache_article(&info.sign_name, info.clone());
+        storage_info
+            .write()
+            .cache_article(&info.sign_name, info.clone());
         return cx.render(rsx! {
             div {
                 class: "container",
@@ -232,6 +248,60 @@ pub fn _404(cx: Scope) -> Element {
                     }
                 }
             }
+        }
+    })
+}
+
+pub fn Tags(cx: Scope) -> Element {
+    let storage_info = StorageInfo::load_all();
+
+    // return cx.render(rsx! {
+    //     "{storage_info:?}",
+    // });
+
+    let tags = storage_info.tags.clone();
+    let tags_list = tags.iter().map(|tag| {
+        let name = tag.0.to_string();
+        let num = tag.1.len();
+        rsx! {
+            li {
+                a {
+                    strong {
+                        "{name}",
+                    }
+                    span {
+                        style: "float: right;",
+                        class: "tag is-primary",
+                        "{num}"
+                    }
+                }
+            }
+        }
+
+    });
+
+    cx.render(rsx! {
+        div {
+            class: "container",
+            div {
+                class: "card",
+                div {
+                    class: "card-content",
+                    aside {
+                        "class": "menu",
+                        p {
+                            class: "menu-label",
+                            "Article Tags Archive"
+                        }
+                        ul {
+                            class: "menu-list",
+                            tags_list
+                        }
+                    }
+
+                }
+            }
+            br {}
         }
     })
 }
