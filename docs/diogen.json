@@ -9,12 +9,12 @@
     "scheme": [
       {
         "domain": "diogen.mrxzx.info",
-        "request": "/"
+        "request": "#{repo:raw}/docs/"
       },
       {
         "domain": ["127.0.0.1", "localhost"],
         "port": 8080,
-        "request": "#{repo:raw}/docs/"
+        "request": "/"
       }
     ]
   },

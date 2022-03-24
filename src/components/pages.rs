@@ -4,7 +4,7 @@ use dioxus_heroicons::{solid::Shape, Icon};
 use crate::{
     components::link::Link,
     config::DiogenConfig,
-    posts::{get_post, get_post_index},
+    posts::PostGetter,
 };
 
 pub fn HomePage(cx: Scope) -> Element {
@@ -14,13 +14,11 @@ pub fn HomePage(cx: Scope) -> Element {
     // let repo = config.repository.clone().unwrap();
     let config = config.clone();
     let v = use_future(&cx, (), |_| async move {
-        let list = get_post_index().await;
+        let post_getter = PostGetter { config: config.clone() };
+        let list = post_getter.get_post_index().await;
         let mut result = vec![];
         for ar in list {
-            // raw_path 也要考虑子目录的问题
-            let raw_path = config.root.clone();
-            let meta = get_post(&ar, &raw_path).await;
-
+            let meta = post_getter.get_post(&ar).await;
             if let Some(meta) = meta {
                 result.push(meta);
             }
@@ -148,9 +146,9 @@ pub fn ArticleDisplay(cx: Scope, sign_name: String) -> Element {
     drop(info);
 
     let sign_name = sign_name.clone();
-    let repo = config.repository.clone().unwrap();
     let config = config.clone();
     let r = use_future(&cx, (), |_| {
+        let post_getter = PostGetter { config: config.clone() };
         async move {
             let info = if articles.contains_key(&sign_name) {
                 Some(articles.get(&sign_name).unwrap().clone())
@@ -159,15 +157,7 @@ pub fn ArticleDisplay(cx: Scope, sign_name: String) -> Element {
                 let file_name = String::from_utf8(file_name).unwrap_or_default();
 
                 let raw_path = config.root.clone();
-                let meta = get_post(&file_name, &raw_path).await;
-
-                if meta.is_none() {
-                    // if can't load meta from current path, try to load from repo.
-                    let meta = get_post(&file_name, &repo.get_raw_path().unwrap()).await;
-                    meta
-                } else {
-                    meta
-                }
+                post_getter.get_post(&file_name).await
             };
             info
         }
