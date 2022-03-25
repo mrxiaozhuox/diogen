@@ -43,6 +43,10 @@
       "link": "/tags"
     },
     {
+      "text": "Category",
+      "link": "/category"
+    },
+    {
       "text": "DioxusLabs",
       "link": "https://dioxuslabs.com/"
     }

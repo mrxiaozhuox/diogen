@@ -54,7 +54,7 @@ fn app(cx: Scope) -> Element {
     // 这种方案要比 props 传递更加方便
     let config = config.value().unwrap();
     use_context_provider(&cx, || config.clone());
-    use_context_provider(&cx, StorageInfo::default);
+    use_context_provider(&cx, || StorageInfo::load_all().unwrap_or_default());
 
     cx.render(rsx! {
         TopBar {}

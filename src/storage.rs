@@ -45,8 +45,16 @@ impl StorageInfo {
         let local_stroage = web_sys::window().unwrap().local_storage().unwrap().unwrap();
 
         let mut need_storage: StorageInfo = self.clone();
-        // We don't need storage ArticleInfo into localstorage, because the data is very big!
+        // We don't need storage ArticleInfo.content into localstorage, because the data is very big!
         need_storage.article_content = HashMap::new();
+        for article in &self.article_content {
+        
+            let mut article_info = article.1.clone();
+            article_info.content = String::new();
+            article_info.description = String::new();
+
+            need_storage.cache_article(article.0, article_info);
+        }
 
         local_stroage
             .set_item(

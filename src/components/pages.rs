@@ -166,11 +166,17 @@ pub fn ArticleDisplay(cx: Scope, sign_name: String) -> Element {
             config: config.clone(),
         };
         async move {
+            let file_name = base64::decode(sign_name.as_str()).unwrap_or_default();
+            let file_name = String::from_utf8(file_name).unwrap_or_default();
             let info = if articles.contains_key(&sign_name) {
-                Some(articles.get(&sign_name).unwrap().clone())
+                let temp = articles.get(&sign_name).unwrap().clone();
+                let temp = if temp.content.is_empty() {
+                    post_getter.get_post(&file_name).await
+                } else {
+                    Some(temp)
+                };
+                temp
             } else {
-                let file_name = base64::decode(sign_name.as_str()).unwrap_or_default();
-                let file_name = String::from_utf8(file_name).unwrap_or_default();
                 post_getter.get_post(&file_name).await
             };
             info
@@ -254,16 +260,40 @@ pub fn _404(cx: Scope) -> Element {
 }
 
 pub fn Tags(cx: Scope) -> Element {
-    let storage_info = StorageInfo::load_all().unwrap();
+    let storage_info = use_context::<StorageInfo>(&cx).unwrap();
+    let storage_info = storage_info.read();
 
-    // return cx.render(rsx! {
-    //     "{storage_info:?}",
-    // });
+    let tags = &storage_info.tags;
 
-    let tags = storage_info.tags.clone();
-    let tags_list = tags.iter().map(|tag| {
+    if tags.is_empty() {
+        return cx.render(rsx! {
+            div {
+                class: "container",
+                div {
+                    class: "card",
+                    div {
+                        class: "card-content",
+                        style: "text-align: center;",
+                        strong { "No tags archive" }
+                    }
+                }
+                br {}
+            }
+        });
+    }
+
+    let mut tag_vec = tags
+        .iter()
+        .map(|(k, v)| (k.clone(), v.len()))
+        .collect::<Vec<_>>();
+    tag_vec.sort_by(|a, b| b.1.cmp(&a.1));
+
+    let tags_list = tag_vec.iter().map(|tag| {
         let name = tag.0.to_string();
-        let num = tag.1.len();
+        let num = tag.1;
+
+        let class = "tag is-link";
+
         rsx! {
             li {
                 a {
@@ -272,13 +302,12 @@ pub fn Tags(cx: Scope) -> Element {
                     }
                     span {
                         style: "float: right;",
-                        class: "tag is-primary",
+                        class: "{class}",
                         "{num}"
                     }
                 }
             }
         }
-
     });
 
     cx.render(rsx! {
@@ -303,6 +332,102 @@ pub fn Tags(cx: Scope) -> Element {
                 }
             }
             br {}
+        }
+    })
+}
+
+pub fn Category(cx: Scope) -> Element {
+    let storage_info = use_context::<StorageInfo>(&cx).unwrap();
+    let storage_info = storage_info.read();
+
+    let category_list = use_state(&cx, || {
+        let mut category_vec = storage_info
+            .category
+            .iter()
+            .map(|(k, v)| (k.to_string(), v.len()))
+            .collect::<Vec<_>>();
+        category_vec.sort_by(|a, b| {
+            if a.0 == "Default" {
+                return a.1.cmp(&b.1);
+            }
+            b.1.cmp(&a.1)
+        });
+        category_vec
+    });
+    let current_category = use_state(&cx, || "Default".to_string());
+
+    let display_list = if category_list.get().len() > 10 {
+        category_list.get()[0..10].to_vec()
+    } else {
+        category_list.get().clone()
+    };
+
+    let display_list = display_list.iter().map(|(name, _)| {
+        let n = name.clone();
+        let class = if &n == current_category.get() {
+            "is-active"
+        } else {
+            ""
+        };
+        rsx! {
+            a {
+                class: "{class}",
+                onclick: move |_| {
+                    current_category.set(n.clone());
+                },
+                "{name}"
+            }
+        }
+    });
+
+    let current_articles = storage_info
+        .category
+        .get(current_category.get())
+        .cloned()
+        .unwrap_or_default();
+    let articles_list = current_articles.iter().map(|name| {
+        let article = storage_info.article_content.get(name).unwrap();
+        rsx! {
+            Link {
+                class: "panel-block",
+                to: "/articles/{article.sign_name}",
+                "@{article.title} - [{article.date}]"
+            }
+        }
+    });
+
+    cx.render(rsx! {
+        div {
+            class: "container",
+            article {
+                class: "panel is-info",
+                p {
+                    class: "panel-heading",
+                    "Category Filter"
+                }
+                div {
+                    class: "panel-block",
+                    p {
+                        class: "control has-icons-left",
+                        input {
+                            class: "input is-info",
+                            r#type: "text",
+                            placeholder: "Category Name",
+                        }
+                        span {
+                            class: "icon is-small is-left",
+                            Icon {
+                                icon: Shape::Search,
+                            }
+                        }
+                    }
+                }
+                p {
+                    class: "panel-tabs",
+                    display_list
+                }
+                articles_list
+            }
         }
     })
 }

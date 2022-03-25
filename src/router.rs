@@ -28,6 +28,10 @@ pub fn DynPath<'a>(cx: Scope<'a>, path: &'a str) -> Element {
         return cx.render(rsx! {
             crate::components::pages::Tags {}
         });
+    } else if *path == "/category" {
+        return cx.render(rsx! {
+            crate::components::pages::Category {}
+        });
     }
 
     cx.render(rsx! {
