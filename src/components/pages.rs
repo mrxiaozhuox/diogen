@@ -1,4 +1,4 @@
-use dioxus::prelude::*;
+use dioxus::{events::onchange, prelude::*};
 use dioxus_heroicons::{solid::Shape, Icon};
 
 use crate::{
@@ -340,58 +340,25 @@ pub fn Category(cx: Scope) -> Element {
     let storage_info = use_context::<StorageInfo>(&cx).unwrap();
     let storage_info = storage_info.read();
 
-    let category_list = use_state(&cx, || {
-        let mut category_vec = storage_info
-            .category
-            .iter()
-            .map(|(k, v)| (k.to_string(), v.len()))
-            .collect::<Vec<_>>();
-        category_vec.sort_by(|a, b| {
-            if a.0 == "Default" {
-                return a.1.cmp(&b.1);
+    let category_list = storage_info.category.clone();
+
+    let display_list = category_list.iter().map(|(name, list)| {
+        let articles_list = list.iter().map(|name| {
+            let article = storage_info.article_content.get(name).unwrap();
+            rsx! {
+                Link {
+                    class: "panel-block",
+                    to: "/articles/{article.sign_name}",
+                    "{article.title}"
+                }
             }
-            b.1.cmp(&a.1)
         });
-        category_vec
-    });
-    let current_category = use_state(&cx, || "Default".to_string());
-
-    let display_list = if category_list.get().len() > 10 {
-        category_list.get()[0..10].to_vec()
-    } else {
-        category_list.get().clone()
-    };
-
-    let display_list = display_list.iter().map(|(name, _)| {
-        let n = name.clone();
-        let class = if &n == current_category.get() {
-            "is-active"
-        } else {
-            ""
-        };
         rsx! {
-            a {
-                class: "{class}",
-                onclick: move |_| {
-                    current_category.set(n.clone());
-                },
-                "{name}"
-            }
-        }
-    });
-
-    let current_articles = storage_info
-        .category
-        .get(current_category.get())
-        .cloned()
-        .unwrap_or_default();
-    let articles_list = current_articles.iter().map(|name| {
-        let article = storage_info.article_content.get(name).unwrap();
-        rsx! {
-            Link {
-                class: "panel-block",
-                to: "/articles/{article.sign_name}",
-                "@{article.title} - [{article.date}]"
+            li {
+                a { strong { "{name}" } }
+                ul {
+                    articles_list
+                }
             }
         }
     });
@@ -399,34 +366,22 @@ pub fn Category(cx: Scope) -> Element {
     cx.render(rsx! {
         div {
             class: "container",
-            article {
-                class: "panel is-info",
-                p {
-                    class: "panel-heading",
-                    "Category Filter"
-                }
+            div {
+                class: "card",
                 div {
-                    class: "panel-block",
-                    p {
-                        class: "control has-icons-left",
-                        input {
-                            class: "input is-info",
-                            r#type: "text",
-                            placeholder: "Category Name",
+                    class: "card-content",
+                    aside {
+                        class: "menu",
+                        p {
+                            class: "menu-label",
+                            "Category Archive"
                         }
-                        span {
-                            class: "icon is-small is-left",
-                            Icon {
-                                icon: Shape::Search,
-                            }
+                        ul {
+                            class: "menu-list",
+                            display_list
                         }
                     }
                 }
-                p {
-                    class: "panel-tabs",
-                    display_list
-                }
-                articles_list
             }
         }
     })
